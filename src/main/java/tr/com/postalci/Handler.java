@@ -26,10 +26,30 @@ public class Handler implements RequestHandler<Object, String> {
         String body = (String) inputMap.get("body");
         logger.log("BODY: " + body);
         HashMap<String, String> bodyMap = gson.fromJson(body, HashMap.class);
-        logger.log("BODY.name: " + bodyMap.get("name"));
+
+        processRequest(bodyMap, logger);
         // process input
 
+        // TODO: change responses
         return body;
+    }
+
+    private void processRequest(Map<String, String> bodyMap, LambdaLogger logger) {
+
+        String sender = bodyMap.get("sender");
+        String recipient = bodyMap.get("recipient");
+        String subject = bodyMap.get("subject");
+        String bodyHTML = bodyMap.get("bodyHTML");
+
+        // TODO: validate body HTML syntax before sending the email
+
+        EmailSender.send(
+                sender,
+                recipient,
+                subject,
+                bodyHTML,
+                logger
+        );
     }
 
     private HashMap<String, Object> getInputMap(Object input) {
@@ -38,5 +58,6 @@ public class Handler implements RequestHandler<Object, String> {
         }
         return (HashMap<String, Object>) input;
     }
+
 
 }

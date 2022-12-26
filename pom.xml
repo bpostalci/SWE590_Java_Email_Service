@@ -57,6 +57,12 @@
             <artifactId>gson</artifactId>
             <version>2.10</version>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/software.amazon.awssdk/sesv2 -->
+        <dependency>
+            <groupId>software.amazon.awssdk</groupId>
+            <artifactId>sesv2</artifactId>
+            <version>2.19.4</version>
+        </dependency>
     </dependencies>
 
 </project>
