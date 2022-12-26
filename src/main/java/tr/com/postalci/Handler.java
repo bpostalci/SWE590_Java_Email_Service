@@ -7,7 +7,6 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import java.util.HashMap;
-import java.util.Map;
 
 public class Handler implements RequestHandler<Object, String> {
     Gson gson = new GsonBuilder().setPrettyPrinting().create();
@@ -27,29 +26,11 @@ public class Handler implements RequestHandler<Object, String> {
         logger.log("BODY: " + body);
         HashMap<String, String> bodyMap = gson.fromJson(body, HashMap.class);
 
-        processRequest(bodyMap, logger);
+        EmailData emailData = EmailData.create(bodyMap);
+        EmailSender.send(emailData, logger);
         // process input
 
-        // TODO: change responses
-        return body;
-    }
-
-    private void processRequest(Map<String, String> bodyMap, LambdaLogger logger) {
-
-        String sender = bodyMap.get("sender");
-        String recipient = bodyMap.get("recipient");
-        String subject = bodyMap.get("subject");
-        String bodyHTML = bodyMap.get("bodyHTML");
-
-        // TODO: validate body HTML syntax before sending the email
-
-        EmailSender.send(
-                sender,
-                recipient,
-                subject,
-                bodyHTML,
-                logger
-        );
+        return "successfully send email to " + bodyMap.get("recipients");
     }
 
     private HashMap<String, Object> getInputMap(Object input) {

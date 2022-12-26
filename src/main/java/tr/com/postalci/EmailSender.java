@@ -1,31 +1,24 @@
 package tr.com.postalci;
 
 import com.amazonaws.services.lambda.runtime.LambdaLogger;
-import software.amazon.awssdk.auth.credentials.ProfileCredentialsProvider;
-import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.sesv2.SesV2Client;
 import software.amazon.awssdk.services.sesv2.model.*;
 
 public class EmailSender {
-    public static void send(
-            String sender,
-            String recipient,
-            String subject,
-            String bodyHTML,
-            LambdaLogger logger
-    ) {
-
+    public static void send(EmailData emailData, LambdaLogger logger) {
 
         Destination destination = Destination.builder()
-                .toAddresses(recipient)
+                .toAddresses(emailData.getRecipients())
+                .bccAddresses(emailData.getBccAddresses())
+                .ccAddresses(emailData.getCcAddresses())
                 .build();
 
         Content content = Content.builder()
-                .data(bodyHTML)
+                .data(emailData.getBodyHTML())
                 .build();
 
         Content sub = Content.builder()
-                .data(subject)
+                .data(emailData.getSubject())
                 .build();
 
         Body body = Body.builder()
@@ -44,7 +37,7 @@ public class EmailSender {
         SendEmailRequest emailRequest = SendEmailRequest.builder()
                 .destination(destination)
                 .content(emailContent)
-                .fromEmailAddress(sender)
+                .fromEmailAddress(emailData.getSender())
                 .build();
 
         try (SesV2Client client = SesV2Client.create()) {
@@ -57,14 +50,4 @@ public class EmailSender {
             System.exit(1);
         }
     }
-
-//    public static void main(String[] args) {
-//        send(
-//                "bpostalciaws@gmail.com",
-//                "bpostalciaws2@gmail.com",
-//                "Hello",
-//                "merhaba",
-//                null
-//        );
-//    }
 }
