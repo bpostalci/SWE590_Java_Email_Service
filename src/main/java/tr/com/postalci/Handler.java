@@ -7,6 +7,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import java.util.HashMap;
+import java.util.Map;
 
 public class Handler implements RequestHandler<Object, String> {
     Gson gson = new GsonBuilder().setPrettyPrinting().create();
@@ -14,7 +15,7 @@ public class Handler implements RequestHandler<Object, String> {
     @Override
     public String handleRequest(Object input, Context context) {
 
-        HashMap<String, Object> inputMap = getInputMap(input);
+        HashMap<String, String> inputMap = getInputMap(input);
         LambdaLogger logger = context.getLogger();
 
         // raw event logs
@@ -22,23 +23,23 @@ public class Handler implements RequestHandler<Object, String> {
         logger.log("EVENT TYPE: " + input.getClass());
 
         // process input
-        String body = (String) inputMap.get("body");
-        logger.log("BODY: " + body);
-        HashMap<String, String> bodyMap = gson.fromJson(body, HashMap.class);
+        Map<String, String> response = new HashMap<>();
 
-        EmailData emailData = EmailData.create(bodyMap);
-        EmailSender.send(emailData, logger);
+        try {
+            EmailData emailData = EmailData.create(inputMap);
+            EmailSender.send(emailData, logger);
+        } catch (Exception e) {
+            return "cannot send email " + e.getMessage();
+        }
         // process input
 
-        return "successfully send email to " + bodyMap.get("recipients");
+        return "successfully sent email to " + inputMap.get("recipients");
     }
 
-    private HashMap<String, Object> getInputMap(Object input) {
+    private HashMap<String, String> getInputMap(Object input) {
         if (input instanceof String) {
             return gson.fromJson((String) input, HashMap.class);
         }
-        return (HashMap<String, Object>) input;
+        return (HashMap<String, String>) input;
     }
-
-
 }

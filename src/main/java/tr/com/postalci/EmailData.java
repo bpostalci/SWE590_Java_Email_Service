@@ -1,6 +1,5 @@
 package tr.com.postalci;
 
-import java.lang.reflect.Array;
 import java.util.Map;
 
 public class EmailData {
@@ -22,13 +21,10 @@ public class EmailData {
     public static EmailData create(Map<String, String> bodyMap) {
         String sender = bodyMap.get("sender");
         String[] recipients = bodyMap.get("recipients").split(",");
-        String[] ccAddresses = bodyMap.get("cc_addresses") != null ? bodyMap.get("cc_addresses").split(",") : new String[]{};
-        String[] bccAddresses = bodyMap.get("bcc_addresses") != null ? bodyMap.get("bcc_addresses").split(",") : new String[]{};
+        String[] ccAddresses = bodyMap.get("cc_addresses") != null ? bodyMap.get("cc_addresses").split(",") : null;
+        String[] bccAddresses = bodyMap.get("bcc_addresses") != null ? bodyMap.get("bcc_addresses").split(",") : null;
         String subject = bodyMap.get("subject");
         String bodyHTML = bodyMap.get("bodyHTML");
-
-        // TODO: validate body html syntax
-
         return new EmailData(sender, recipients, ccAddresses, bccAddresses, subject, bodyHTML);
     }
 

@@ -7,11 +7,18 @@ import software.amazon.awssdk.services.sesv2.model.*;
 public class EmailSender {
     public static void send(EmailData emailData, LambdaLogger logger) {
 
-        Destination destination = Destination.builder()
-                .toAddresses(emailData.getRecipients())
-                .bccAddresses(emailData.getBccAddresses())
-                .ccAddresses(emailData.getCcAddresses())
-                .build();
+        Destination.Builder destinationBuilder = Destination.builder()
+                .toAddresses(emailData.getRecipients());
+
+        if (emailData.getBccAddresses() != null && emailData.getBccAddresses().length > 0) {
+            destinationBuilder.bccAddresses(emailData.getBccAddresses());
+        }
+
+        if (emailData.getCcAddresses() != null && emailData.getCcAddresses().length > 0) {
+            destinationBuilder.ccAddresses(emailData.getCcAddresses());
+        }
+
+        Destination destination = destinationBuilder.build();
 
         Content content = Content.builder()
                 .data(emailData.getBodyHTML())
