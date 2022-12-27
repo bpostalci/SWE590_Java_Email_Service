@@ -23,8 +23,6 @@ public class Handler implements RequestHandler<Object, String> {
         logger.log("EVENT TYPE: " + input.getClass());
 
         // process input
-        Map<String, String> response = new HashMap<>();
-
         try {
             EmailData emailData = EmailData.create(inputMap);
             EmailSender.send(emailData, logger);

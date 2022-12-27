@@ -1,6 +1,7 @@
 package tr.com.postalci;
 
 import com.amazonaws.services.lambda.runtime.LambdaLogger;
+import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.sesv2.SesV2Client;
 import software.amazon.awssdk.services.sesv2.model.*;
 
@@ -47,7 +48,9 @@ public class EmailSender {
                 .fromEmailAddress(emailData.getSender())
                 .build();
 
-        try (SesV2Client client = SesV2Client.create()) {
+        try (SesV2Client client = SesV2Client.builder()
+                .region(Region.US_EAST_1)
+                .build()) {
             logger.log("Attempting to send an email through Amazon SES using the AWS SDK for Java...");
             client.sendEmail(emailRequest);
             logger.log("email was sent");
